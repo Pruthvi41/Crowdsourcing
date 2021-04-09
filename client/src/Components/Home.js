@@ -1,29 +1,55 @@
-import React, {useState} from 'react';
+import React from 'react';
+import {useState} from 'react';
+import axios from 'axios';
 import {useHistory} from 'react-router-dom';
 import '../App.css';
-const Home=() =>{
-    const [formData, setFormData] = useState({
-        timeOfTheDay:'',
-        foodType:'',
-        duckLocation:'',
-        duckCount:'',
-        foodQuantity:''
-      });
-      const onChange = e=>setFormData({...formData, [e.target.name]: e.target.value});
-      const history = useHistory();  
-      const handleClick = () => history.push('/Userdata'); 
-      const{timeOfTheDay, foodType, duckLocation, duckCount, foodQuantity} = formData;
-    return (
+function Home() {
+  const [formData, setFormData] = useState({
+    timeOfTheDay:'',
+    foodType:'',
+    duckLocation:'',
+    duckCount:'',
+    foodQuantity:''
+  });
+  const onChange = e=>setFormData({...formData, [e.target.name]: e.target.value});
+  const onHandle = e=>setFormData({...formData, [e.target.name]: e.target.value});
+  const history = useHistory();  
+  const handleClick = () => history.push('/Userdata'); 
+  const{timeOfTheDay, foodType, duckLocation, duckCount, foodQuantity} = formData;
+  const onSubmit = async e =>{
+    e.preventDefault();
+    const newData = {
+      timeOfTheDay,
+      foodType,
+      duckLocation,
+      duckCount,
+      foodQuantity
+    }
+    try{
+      const config = {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+        const body = JSON.stringify(newData);
+        await axios.post('http://localhost:5000/',body, config);   
+      }   
+      catch(err){
+      console.log(err);
+    }
+  }
+  return (
     <div className="container mx-auto">
       <h1>Crowdsource Information</h1>
-        <form>
+        <form onSubmit={e=>onSubmit(e)}>
           <div className="form-group">
             <label htmlFor="name" id="label-name">
             What time the ducks are fed?
             </label>
             <select className="form-control"
               value={formData.timeOfTheDay} name="timeOfTheDay"
-              onChange={onChange}>
+              onChange={onHandle} >
+              <option >Time of the day</option>
               <option value="Morning">Morning</option>
               <option value="Afternoon">Afternoon</option>
               <option value="Evening">Evening</option>
@@ -85,6 +111,6 @@ const Home=() =>{
         <br/>
         <button type="button" onClick={handleClick} className="btn btn-dark">View Data</button> 
     </div>
-    )
+  );
 }
 export default Home;

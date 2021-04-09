@@ -18,5 +18,10 @@ app.post('/', async (req,res) => {
     await duckData.save();
     res.send("ok done");
 });
+app.get('/', (req,res)=>{
+    Duck.find({}).then((duck)=>{
+        res.send(duck);
+    })
+})
 const PORT = process.env.PORT||5000;
 app.listen(PORT, ()=>console.log(`Server started successfully on ${PORT}`));
